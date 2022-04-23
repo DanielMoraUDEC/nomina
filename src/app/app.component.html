@@ -7,12 +7,13 @@
   <title>Nomina</title>
 </head>
 <body>
-  <h1 class="mt-3 mb-3 text-center">Consultar tu Nómina</h1>
+  <h1 class="mt-3 mb-5 text-center">Consultar tu Nómina</h1>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-4 mb-3">
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Tipo de contrato</option>
+        <label for="">Tipo de contrato:</label>
+        <select class="form-select" aria-label="Default select example" (change)="contrato($event.target)">
+          <option selected>Seleccione:</option>
           <option value="1">Contrato a Término Fijo</option>
           <option value="2">Contrato a término indefinido</option>
           <option value="3">Contrato de Obra o labor</option>
@@ -21,6 +22,19 @@
         </select>
       </div>
     </div>
+<div class="container mt-3" *ngIf="isSelect">
+  <div class="row">
+    <div class="col">
+      <h2>{{title}}</h2>
+    </div>
+  </div>
+  <p>{{definition}}</p>
+</div>
+    
+
+
+
+
   </div>
 </body>
 </html>
