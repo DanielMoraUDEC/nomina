@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,18 @@ export class AppComponent {
   title:string = "";
   isSelect = false;
   definition = "";
+  form : FormGroup = new FormGroup ({});
+
+  constructor(){
+  }
+
+  ngOnInit(): void {
+    this.form = new FormGroup({
+      salary : new FormControl('', Validators.required),
+      transAux : new FormControl('', Validators.required)
+    }); 
+  }
+
 
   contrato(event:any) {
     this.isSelect= true;
@@ -34,7 +47,8 @@ export class AppComponent {
   }
 
   tipe1(){
-    this.definition = "fffffff";
+    this.definition = "Este tipo de contrato tiene una duración entre un día y tres años y puede ser renovado hasta por tres veces su permanencia. El empleado goza de todas las prestaciones sociales establecidas por la ley (cesantías, vacaciones y primas) y para su finalización es necesario un preaviso de 30 días." + "\n" +
+     "Las deducciones por nómina de este tipo de contrato son iguales a las de cualquier contrato de vínculo laboral. La vinculación puede ser directamente con la empresa o a través de temporales.";
   }
   tipe2(){
     
@@ -47,6 +61,10 @@ export class AppComponent {
   }
   tipe5(){
     
+  }
+
+  calcular(){
+    console.log(this.form.value);
   }
 
 
