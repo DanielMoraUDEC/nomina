@@ -14,13 +14,20 @@ export class AppComponent {
   definition = "";
   form : FormGroup = new FormGroup ({});
 
+  isCalculated = false;
+  prima:number = 0;
+  cesantias:number = 0;
+  taxCesanti:number = 0;
+
   constructor(){
   }
 
   ngOnInit(): void {
     this.form = new FormGroup({
       salary : new FormControl('', Validators.required),
-      transAux : new FormControl('', Validators.required)
+      transAux : new FormControl('', Validators.required),
+      startDate: new FormControl(new Date, Validators.required),
+      endDate: new FormControl(new Date, Validators.required)
     }); 
   }
 
@@ -65,9 +72,26 @@ export class AppComponent {
 
   calcular(){
     if(this.form.valid){
-      console.log(this.form.value);
+      this.isCalculated = true;
+      let days = (Date.parse(this.form.controls['endDate'].value) - Date.parse(this.form.controls['startDate'].value))/ (1000 * 3600 * 24);         
+      this.Calulated(days);
     }
     
+  }
+  Calulated(days: number){
+    console.log(days);
+    //prima
+    if(this.form.controls['transAux'].value == "false"){
+      this.prima = this.form.controls['salary'].value / 360 * days;
+      this.cesantias = this.form.controls['salary'].value / 360 * days;
+    }else{
+      this.prima = (this.form.controls['salary'].value + 117172) /360 * days;
+      this.cesantias = (this.form.controls['salary'].value + 117172) / 360 * days;
+    }
+     //cesantias
+     this.cesantias = this.form.controls['salary'].value / 360 * days;
+
+     this.taxCesanti = days * 0.12 * this.cesantias / 360;
   }
 
 
