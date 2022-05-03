@@ -13,6 +13,7 @@ export class AppComponent {
   isSelect = false;
   definition = "";
   form : FormGroup = new FormGroup ({});
+  form2 : FormGroup = new FormGroup ({});
 
   isCalculated = false;
   prima:number = 0;
@@ -28,6 +29,10 @@ export class AppComponent {
       transAux : new FormControl('', Validators.required),
       startDate: new FormControl(new Date, Validators.required),
       endDate: new FormControl(new Date, Validators.required)
+    }); 
+    this.form2 = new FormGroup({
+      tipeContract:new FormControl('', Validators.required),
+      option : new FormControl('', Validators.required)
     }); 
   }
 
