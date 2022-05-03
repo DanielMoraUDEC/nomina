@@ -39,7 +39,10 @@ export class AppComponent {
 
   contrato(event:any) {
     this.isSelect= true;
-    switch(event.value){
+
+    let contract = this.form2.controls['tipeContract'].value;
+    
+    switch(contract){
       case '1': this.title = "Contrato a Término Fijo";
       this.tipe1();
       break;
