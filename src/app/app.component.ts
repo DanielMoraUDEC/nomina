@@ -1,26 +1,33 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-
 interface tabla{
   descripcion:string,
   valor:number
 }
+
+interface tablaNomina{
+  baseSal: number,
+  baseSalPlusTransAux: number,
+  baseSalPlusExtras: number,
+  baseSalPlusHolidays: number,
+  salMinusPension: number,
+  salMinusEPS: number,
+  totalSal: number
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 
-
-
 export class AppComponent {
-
-
   title:string = "";
   isSelect = false;
   definition = "";
   form : FormGroup = new FormGroup ({});
+  form0: FormGroup = new FormGroup ({});
   form2 : FormGroup = new FormGroup ({});
 
   isCalculated = false;
@@ -30,7 +37,20 @@ export class AppComponent {
   liquidacion:boolean = false;
   nomina:boolean = false;
 
+  selection: string = "";
+
+  baseSalPlusExtras = 0;  
+  baseSal = 0;
+  baseSalPlusHolidays = 0;
+  baseSalPlusTransAux = 0;
+  salMinusPension = 0;
+  salMinusEPS = 0;
+
+  contIndxTable = 0;
+
   lista:tabla[] = [];
+
+  listaNomina:tablaNomina[] = [];
 
   constructor(){
   }
@@ -40,8 +60,22 @@ export class AppComponent {
       salary : new FormControl('', Validators.required),
       transAux : new FormControl('', Validators.required),
       startDate: new FormControl(new Date, Validators.required),
-      endDate: new FormControl(new Date, Validators.required)
+      endDate: new FormControl(new Date, Validators.required),
     }); 
+
+    this.form0 = new FormGroup({
+      salary : new FormControl('', Validators.required),
+      transAux : new FormControl('', Validators.required),
+      startDate: new FormControl(new Date, Validators.required),
+      endDate: new FormControl(new Date, Validators.required),
+      daysNormal: new FormControl('', [Validators.required, Validators.min(1)]),
+      daysNight: new FormControl(''),
+      hrsExtraNight: new FormControl(''),
+      hrsExtraDay: new FormControl(''),
+      workOnHolidaysDay: new FormControl(''),
+      workOnHolidaysNight: new FormControl('')
+    });
+
     this.form2 = new FormGroup({
       tipeContract:new FormControl('', Validators.required),
       option : new FormControl('', Validators.required)
@@ -55,9 +89,11 @@ export class AppComponent {
     if(this.form2.controls['option'].value == '1'){
       this.liquidacion = false;
       this.nomina = true;
+      this.selection = "nomina";
     }else{
       this.liquidacion = true;
       this.nomina = false;
+      this.selection = "liquidacion";
     }
 
     let contract = this.form2.controls['tipeContract'].value;
@@ -98,13 +134,21 @@ export class AppComponent {
   }
 
   calcular(){
-    if(this.form.valid){
+    if(this.form.valid || this.form0.valid){
       this.isCalculated = true;
-      let days = (Date.parse(this.form.controls['endDate'].value) - Date.parse(this.form.controls['startDate'].value))/ (1000 * 3600 * 24);         
-      this.Calulated(days);
+      
+      switch(this.selection){
+        case "liquidacion":
+          let days = (Date.parse(this.form.controls['endDate'].value) - Date.parse(this.form.controls['startDate'].value))/ (1000 * 3600 * 24);
+          this.Calulated(days);
+          break;
+        case "nomina":
+          this.NominaCalculated();
+          break;
+      }
     }
-    
   }
+
   Calulated(days: number){
     console.log(days);
     //prima
@@ -143,5 +187,65 @@ export class AppComponent {
 
   }
 
+  NominaCalculated(){
+    
+    let tot = 0;
 
+    this.contIndxTable += 1;
+
+    if(this.form0.controls['transAux'].value == 'false'){
+      
+      this.baseSal = this.form0.controls['daysNormal'].value * 33333.33 + (this.form0.controls['daysNight'].value * (33333.33 + 5625)); 
+      this.baseSal = (this.form0.controls['salary'].value - this.baseSal) + this.baseSal;
+
+      this.baseSalPlusExtras = ((this.baseSal * 1.75 * this.form0.controls['hrsExtraNight'].value) / 240) + ((this.baseSal * 1.25 * this.form0.controls['hrsExtraDay'].value) / 240)
+    
+      this.baseSalPlusHolidays = (this.form0.controls['workOnHolidaysDay'].value * 8333.33) + (this.form0.controls['workOnHolidaysNight'].value * 10416.67)
+    
+      this.baseSalPlusTransAux = 0;
+
+      this.salMinusPension = this.baseSal * 0.04;
+
+      this.salMinusEPS = this.baseSal * 0.04;
+
+      tot = this.baseSal + ((this.baseSal * 1.75 * this.form0.controls['hrsExtraNight'].value) / 240) + ((this.baseSal * 1.25 * this.form0.controls['hrsExtraDay'].value) / 240) + (this.form0.controls['workOnHolidaysDay'].value * 8333.33) + (this.form0.controls['workOnHolidaysNight'].value * 10416.67)
+    
+      tot = tot - (this.salMinusEPS + this.salMinusPension);
+
+    }else{
+      this.baseSal = this.form0.controls['daysNormal'].value * 33333.33 + (this.form0.controls['daysNight'].value * (33333.33 + 5625)); 
+      this.baseSal = (this.form0.controls['salary'].value - this.baseSal) + this.baseSal;
+      
+      this.baseSalPlusExtras = ((this.baseSal * 1.75 * this.form0.controls['hrsExtraNight'].value) / 240) + ((this.baseSal * 1.25 * this.form0.controls['hrsExtraDay'].value) / 240)// + (this.form.controls['salary'].value * ) 
+    
+      this.baseSalPlusHolidays = (this.form0.controls['workOnHolidaysDay'].value * 8333.33) + (this.form0.controls['workOnHolidaysNight'].value * 10416.67)
+    
+      this.baseSalPlusTransAux = 117172;
+
+      this.salMinusPension = this.baseSal * 0.04;
+
+      this.salMinusEPS = this.baseSal * 0.04;
+
+      tot = this.baseSal + 117172 + (this.form0.controls['workOnHolidaysDay'].value * 8333.33) + (this.form0.controls['workOnHolidaysNight'].value * 10416.67) + ((this.baseSal * 1.75 * this.form0.controls['hrsExtraNight'].value) / 240) + ((this.baseSal * 1.25 * this.form0.controls['hrsExtraDay'].value) / 240)
+
+      tot = tot - (this.salMinusEPS + this.salMinusPension);
+    }
+
+    let obj:tablaNomina = {
+      baseSal: this.baseSal,
+      baseSalPlusExtras: this.baseSalPlusExtras,
+      baseSalPlusHolidays: this.baseSalPlusHolidays,
+      baseSalPlusTransAux: this.baseSalPlusTransAux,
+      salMinusPension: this.salMinusPension,
+      salMinusEPS: this.salMinusEPS,
+      totalSal: tot
+    };
+
+    if(this.contIndxTable > 1){
+      this.listaNomina.splice(0, this.listaNomina.length);
+    }
+
+    this.listaNomina.push(obj);
+    
+  }
 }
