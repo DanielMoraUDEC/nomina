@@ -48,7 +48,6 @@
 
 
 <div class="container mt-3" *ngIf="isSelect">
-
   <div class="card">
     <div class="card-body">
       <div class="row">
@@ -59,10 +58,98 @@
       <p>{{definition}}</p>
     </div>
   </div>
+</div>
 
+
+<div class="container mt-3" *ngIf="liquidacion">
   <div class="card mt-3">
     <div class="card-body">
-      <h2>Calcular prestaciones sociales:</h2>
+      <h2>Calcular Liquidación:</h2>
+      
+      <form [formGroup]="form">
+        <div class="row">
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Salario Base: </label>
+            <input [class.is-invalid]="form.get('salary')?.touched && form.get('salary')?.invalid"
+            type="number" class="form-control" formControlName="salary">
+            <div class="invalid-feedback">
+              Es un campo requerido.
+          </div>
+          </div>
+          <div class="mb-3 form-check col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Recibe auxilio de transporte?</label>
+            <br>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="true" formControlName="transAux">
+              <label class="form-check-label" for="inlineRadio1">Si</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="false" formControlName="transAux">
+              <label class="form-check-label" for="inlineRadio2">No</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <h3>Periodo calculado:</h3>
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Fecha de Inicio: </label>
+            <input [class.is-invalid]="form.get('startDate')?.touched && form.get('startDate')?.invalid"
+            type="date" class="form-control" formControlName="startDate">
+            <div class="invalid-feedback">
+              Es un campo requerido.
+          </div>
+          </div>
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Fecha de Fin: </label>
+            <input [class.is-invalid]="form.get('endDate')?.touched && form.get('endDate')?.invalid"
+            type="date" class="form-control" formControlName="endDate">
+            <div class="invalid-feedback">
+              Es un campo requerido.
+          </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" (click)="calcular()">Calcular</button>
+      </form>
+      
+      <div class="container" *ngIf="isCalculated">
+        <hr>
+        <h2>Sus presatciones son: </h2>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Descripción</th>
+              <th scope="col">Valor</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let item of lista">
+            <tr>
+              <th scope="row">{{item.descripcion}}</th>
+              <td>{{item.valor | number}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <label for="">Prima de servicios: Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis vitae nostrum consequatur ipsum eius ratione accusamus cumque, nemo excepturi eaque quaerat voluptatum alias deserunt itaque reprehenderit. Tempore dolores delectus placeat.
+        {{prima | number}}</label>
+        <br>
+        <label for="">Cesantías: Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis vitae nostrum consequatur ipsum eius ratione accusamus cumque, nemo excepturi eaque quaerat voluptatum alias deserunt itaque reprehenderit. Tempore dolores delectus placeat.
+          {{cesantias | number}}</label>
+        <br>
+        <label for="">Intereses a las Cesantías: Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis vitae nostrum consequatur ipsum eius ratione accusamus cumque, nemo excepturi eaque quaerat voluptatum alias deserunt itaque reprehenderit. Tempore dolores delectus placeat.
+          {{taxCesanti | number}}</label>
+
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<div class="container mt-3" *ngIf="nomina">
+  <div class="card mt-3">
+    <div class="card-body">
+      <h2>Calcular Nómina:</h2>
       
       <form [formGroup]="form">
         <div class="row">
@@ -126,9 +213,6 @@
       
     </div>
   </div>
-
-
-
 </div>
     
 </body>

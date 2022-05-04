@@ -1,11 +1,19 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
+
+interface tabla{
+  descripcion:string,
+  valor:number
+}
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
+
+
 export class AppComponent {
 
 
@@ -19,6 +27,10 @@ export class AppComponent {
   prima:number = 0;
   cesantias:number = 0;
   taxCesanti:number = 0;
+  liquidacion:boolean = false;
+  nomina:boolean = false;
+
+  lista:tabla[] = [];
 
   constructor(){
   }
@@ -40,8 +52,15 @@ export class AppComponent {
   contrato(event:any) {
     this.isSelect= true;
 
+    if(this.form2.controls['option'].value == '1'){
+      this.liquidacion = false;
+      this.nomina = true;
+    }else{
+      this.liquidacion = true;
+      this.nomina = false;
+    }
+
     let contract = this.form2.controls['tipeContract'].value;
-    
     switch(contract){
       case '1': this.title = "Contrato a Término Fijo";
       this.tipe1();
@@ -100,6 +119,28 @@ export class AppComponent {
      this.cesantias = this.form.controls['salary'].value / 360 * days;
 
      this.taxCesanti = days * 0.12 * this.cesantias / 360;
+
+
+     let obj:tabla = {
+       descripcion: "prima",
+       valor: this.prima
+     };
+
+     this.lista.push(obj);
+     this.lista.push(obj);
+     this.lista.push(obj);
+     this.lista.push(obj);
+     this.lista.push(obj);
+     this.lista.push(obj);
+     this.lista.push(obj);
+
+     this.lista.push(obj);
+     this.lista.push(obj);
+     this.lista.push(obj);
+     this.lista.push(obj);
+
+     this.lista.push(obj);
+
   }
 
 
