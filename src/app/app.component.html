@@ -269,15 +269,48 @@
           </tbody>
         </table>
 
-        <label for="">Prima de servicios: 
-        {{prima | number}}</label>
-        <br>
-        <label for="">Cesantías: 
-          {{cesantias | number}}</label>
-        <br>
-        <label for="">Intereses a las Cesantías: 
-          {{taxCesanti | number}}</label>
-
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Descripción</th>
+              <th scope="col">Valor</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let item of listaPrestaciones">
+            <tr>
+              <th scope="row">ARL</th>
+              <td>{{item.arl | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Pensiones</th>
+              <td>{{item.pensiones | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Caja</th>
+              <td>{{item.caja | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Cesantías</th>
+              <td>{{item.cesantias | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Intereses</th>
+              <td>{{item.intereses | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Prima</th>
+              <td>{{item.prima | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Vacaciones</th>
+              <td>{{item.vacaciones | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Total de prestaciones</th>
+              <td>{{item.totPrestaciones | number}}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       
     </div>
