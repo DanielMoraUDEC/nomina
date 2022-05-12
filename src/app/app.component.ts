@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 interface tabla{
   descripcion:string,
-  valor:number
+  valor:string
 }
 
 interface tablaNomina{
@@ -45,10 +45,14 @@ export class AppComponent {
   prima:number = 0;
   cesantias:number = 0;
   taxCesanti:number = 0;
+  vacations:number = 0;
   liquidacion:boolean = false;
+  listaTotales:tabla[] = [];
   nomina:boolean = false;
-
   selection: string = "";
+  showCalculates:boolean = false;
+  showCalculates2:boolean = false;
+  otherspays:boolean = false;
 
   baseSalPlusExtras = 0;  
   baseSal = 0;
@@ -63,7 +67,7 @@ export class AppComponent {
   vacaciones = 0;
   intereses = 0;
   totPrestaciones = 0;
-
+  disabled:boolean = true;
   contIndxTable = 0;
 
   lista:tabla[] = [];
@@ -76,10 +80,14 @@ export class AppComponent {
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      salary : new FormControl('', Validators.required),
-      transAux : new FormControl('', Validators.required),
+      salary : new FormControl(0, Validators.required),
+      transAux : new FormControl(0, Validators.required),
       startDate: new FormControl(new Date, Validators.required),
       endDate: new FormControl(new Date, Validators.required),
+      hours1 : new FormControl(0),
+      hours2 : new FormControl(0),
+      hours3 : new FormControl(0),
+      hours4 : new FormControl(0),
     }); 
 
     this.form0 = new FormGroup({
@@ -109,7 +117,8 @@ export class AppComponent {
       this.liquidacion = false;
       this.nomina = true;
       this.selection = "nomina";
-    }else{
+    }
+    if(this.form2.controls['option'].value == '2'){
       this.liquidacion = true;
       this.nomina = false;
       this.selection = "liquidacion";
@@ -118,18 +127,28 @@ export class AppComponent {
     let contract = this.form2.controls['tipeContract'].value;
     switch(contract){
       case '1': this.title = "Contrato a Término Fijo";
+      this.showCalculates = true;
+      this.showCalculates2 = false;
       this.tipe1();
       break;
       case '2': this.title = "Contrato a término indefinido";
+      this.showCalculates = true;
+      this.showCalculates2 = false;
       this.tipe2();
       break;
       case '3': this.title = "Contrato de Obra o labor";
+      this.showCalculates = false;
+      this.showCalculates2 = true;
       this.tipe3();
       break;
       case '4': this.title = "Contrato civil por prestación de servicios";
+      this.showCalculates = false;
+      this.showCalculates2 = true;
       this.tipe4();
       break;
       case '5': this.title = "Contrato de aprendizaje";
+      this.showCalculates = false;
+      this.showCalculates2 = true;
       this.tipe5();
       break;
     }
@@ -176,6 +195,7 @@ export class AppComponent {
   Calulated(days: number){
     console.log(days);
     //prima
+    this.listaTotales = [];
     if(this.form.controls['transAux'].value == "false"){
       this.prima = this.form.controls['salary'].value / 360 * days;
       this.cesantias = this.form.controls['salary'].value / 360 * days;
@@ -188,26 +208,67 @@ export class AppComponent {
 
      this.taxCesanti = days * 0.12 * this.cesantias / 360;
 
+     this.vacations = this.form.controls['salary'].value / 720 * days;
 
-     let obj:tabla = {
-       descripcion: "prima",
-       valor: this.prima
-     };
 
-     this.lista.push(obj);
-     this.lista.push(obj);
-     this.lista.push(obj);
-     this.lista.push(obj);
-     this.lista.push(obj);
-     this.lista.push(obj);
-     this.lista.push(obj);
+     if(this.form.controls['hours1'].value >0 || this.form.controls['hours2'].value >0 || this.form.controls['hours3'].value >0 || this.form.controls['hours4'].value >0){
 
-     this.lista.push(obj);
-     this.lista.push(obj);
-     this.lista.push(obj);
-     this.lista.push(obj);
+      let horas1 = this.form.controls['salary'].value/30/8 * 1.25 * this.form.controls['hours1'].value ;
+      let horas2 = (this.form.controls['salary'].value/30/8 * 1.75 * this.form.controls['hours2'].value)+(this.form.controls['salary'].value/30/8 * 0.35 * this.form.controls['hours2'].value);
+      let horas3 = this.form.controls['salary'].value/30/8 * 2 * this.form.controls['hours3'].value ;
+      let horas4 = (this.form.controls['salary'].value/30/8 * 2.5 * this.form.controls['hours4'].value)+(this.form.controls['salary'].value/30/8 * 2.1 * this.form.controls['hours4'].value);
 
-     this.lista.push(obj);
+      this.listaTotales = [{
+        descripcion: "Cesantías",
+        valor: this.cesantias.toFixed(2)
+      },{
+       descripcion: "Intereses Sobre las cesantías",
+       valor: this.taxCesanti.toFixed(2)
+     },{
+       descripcion: "Prima de servicios",
+       valor: this.prima.toFixed(2)
+     },{
+       descripcion: "Vacaciones",
+       valor: this.vacations.toFixed(2)
+     },{
+      descripcion: "Horas extra diurnas",
+      valor: horas1.toFixed(2)
+    },{
+      descripcion: "Horas extra nocturnas(Incluido recargo nocturno)",
+      valor: horas2.toFixed(2)
+    }
+    ,{
+      descripcion: "Horas extra diurnas dominicales",
+      valor: horas3.toFixed(2)
+    },{
+      descripcion: "Horas extra nocturnas dominicales(Incluido recargo nocturno)",
+      valor: horas4.toFixed(2)
+    }];
+ 
+     }else{
+      this.listaTotales = [{
+        descripcion: "Cesantías",
+        valor: this.cesantias.toFixed(2)
+      },{
+       descripcion: "Intereses Sobre las cesantías",
+       valor: this.taxCesanti.toFixed(2)
+     },{
+       descripcion: "Prima de servicios",
+       valor: this.prima.toFixed(2)
+     },{
+       descripcion: "Vacaciones",
+       valor: this.vacations.toFixed(2)
+     }];
+ 
+     }
+
+
+     
+    this.lista = [];
+    this.listaTotales.forEach(element => {
+      this.lista.push(element);
+    });
+     
 
   }
 
@@ -294,5 +355,16 @@ export class AppComponent {
     this.listaNomina.push(obj);
     this.listaPrestaciones.push(obj2);
     
+  }
+
+  morePays(event:any){
+    this.disabled = false;
+    console.log(event.value);
+   if(event.value=='1'){
+    this.otherspays = true;
+   }else{
+    this.otherspays = false;
+   };
+
   }
 }

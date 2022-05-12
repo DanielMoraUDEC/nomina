@@ -20,7 +20,7 @@
     <div class="row justify-content-center">
       <div class="col-md-3 mb-3">
         <label for="">Tipo de contrato:</label>
-        <select class="form-select" aria-label="Default select example"
+        <select class="form-select" aria-label="Default select example" (change)="contrato($event.target)"
         formControlName="tipeContract"
         [class.is-invalid]="form.get('tipeContract')?.touched && form.get('tipeContract')?.invalid">
           <option selected>Seleccione</option>
@@ -66,8 +66,14 @@
 </div>
 
 
-<div class="container mt-3" *ngIf="liquidacion">
-  <div class="card mt-3">
+<div class="container mt-3" *ngIf="liquidacion" >
+  <div class="card mt-3" *ngIf="showCalculates2">
+    <div class="card-body">
+      <h2>Este contrato no tiene derecho liquidación</h2>
+    </div>
+  </div>
+  
+  <div class="card mt-3" *ngIf="showCalculates">
     <div class="card-body">
       <h2>Calcular Liquidación:</h2>
       
@@ -113,14 +119,48 @@
           </div>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary" (click)="calcular()">Calcular</button>
+        <div class="row">
+          <div class="mb-3 form-check col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Se retiró en día de pago de nómina?</label>
+            <br>
+            <div class="form-check form-check-inline" (click)="morePays($event.target)">
+              <input class="form-check-input" type="radio" value="2" name="pays">
+              <label class="form-check-label" for="inlineRadio1">Si</label>
+            </div>
+            <div class="form-check form-check-inline" (click)="morePays($event.target)">
+              <input class="form-check-input" type="radio" value="1" name="pays">
+              <label class="form-check-label" for="inlineRadio2">No</label>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="otherspays">
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extra diurnas: </label>
+            <input type="number" class="form-control" formControlName="hours1">
+          </div>
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extra nocturnas: </label>
+            <input type="number" class="form-control" formControlName="hours2">
+          </div>
+        </div>
+        <div class="row" *ngIf="otherspays">
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total Hora extra diurna dominical: </label>
+            <input type="number" class="form-control" formControlName="hours3">
+          </div>
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total Hora extra nocturna dominical: </label>
+            <input type="number" class="form-control" formControlName="hours4">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" (click)="calcular()" [disabled]="disabled">Calcular</button>
       </form>
       
       <div class="container" *ngIf="isCalculated">
         <hr>
-        <h2>Sus presatciones son: </h2>
+        <h2>Sus prestaciones son: </h2>
 
-        <table class="table">
+        <table class="table table-secondary table-striped">
           <thead>
             <tr>
               <th scope="col">Descripción</th>
@@ -130,20 +170,10 @@
           <tbody *ngFor="let item of lista">
             <tr>
               <th scope="row">{{item.descripcion}}</th>
-              <td>{{item.valor | number}}</td>
+              <td>${{item.valor | number}}</td>
             </tr>
           </tbody>
         </table>
-
-        <label for="">Prima de servicios: Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis vitae nostrum consequatur ipsum eius ratione accusamus cumque, nemo excepturi eaque quaerat voluptatum alias deserunt itaque reprehenderit. Tempore dolores delectus placeat.
-        {{prima | number}}</label>
-        <br>
-        <label for="">Cesantías: Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis vitae nostrum consequatur ipsum eius ratione accusamus cumque, nemo excepturi eaque quaerat voluptatum alias deserunt itaque reprehenderit. Tempore dolores delectus placeat.
-          {{cesantias | number}}</label>
-        <br>
-        <label for="">Intereses a las Cesantías: Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veritatis vitae nostrum consequatur ipsum eius ratione accusamus cumque, nemo excepturi eaque quaerat voluptatum alias deserunt itaque reprehenderit. Tempore dolores delectus placeat.
-          {{taxCesanti | number}}</label>
-
       </div>
       
     </div>
@@ -230,7 +260,7 @@
         <hr>
         <h2>Sus prestaciones son: </h2>
 
-        <table class="table">
+        <table class="table table-secondary table-striped">
           <thead>
             <tr>
               <th scope="col">Descripción</th>
