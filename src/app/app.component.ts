@@ -8,12 +8,22 @@ interface tabla{
 
 interface tablaNomina{
   baseSal: number,
+  baseCotizacion: number,
   baseSalPlusTransAux: number,
   baseSalPlusExtras: number,
   baseSalPlusHolidays: number,
   salMinusPension: number,
   salMinusEPS: number,
   totalSal: number
+}
+
+interface tablaNominaServ{
+  impuestos: number,
+  uvt: number,
+  uvtRetention: number,
+  retefuente: number,
+  reteICA: number,
+  total: number
 }
 
 interface tablaPrestaciones{
@@ -39,7 +49,9 @@ export class AppComponent {
   definition = "";
   form : FormGroup = new FormGroup ({});
   form0: FormGroup = new FormGroup ({});
+  form1: FormGroup = new FormGroup ({});
   form2 : FormGroup = new FormGroup ({});
+
 
   isCalculated = false;
   prima:number = 0;
@@ -66,10 +78,17 @@ export class AppComponent {
 
   contIndxTable = 0;
 
+  termFijo = false;
+  termIndf = false;
+  serv = false;
+  labor = false;
+  aprend = false;
+
   lista:tabla[] = [];
 
   listaNomina:any[] = [];
   listaPrestaciones: any[]=[];
+  listaNominaServ:any[] = [];
 
   constructor(){
   }
@@ -93,6 +112,20 @@ export class AppComponent {
       hrsExtraDay: new FormControl(''),
       workOnHolidaysDay: new FormControl(''),
       workOnHolidaysNight: new FormControl('')
+    });
+
+    this.form1 = new FormGroup({
+      salary : new FormControl('', Validators.required),
+      transAux : new FormControl('', Validators.required),
+      startDate: new FormControl(new Date, Validators.required),
+      endDate: new FormControl(new Date, Validators.required),
+      daysNormal: new FormControl('', [Validators.required, Validators.min(1)]),
+      daysNight: new FormControl(''),
+      hrsExtraNight: new FormControl(''),
+      hrsExtraDay: new FormControl(''),
+      workOnHolidaysDay: new FormControl(''),
+      workOnHolidaysNight: new FormControl(''),
+      arlLevel: new FormControl('',[Validators.required, Validators.min(1), Validators.max(6)])
     });
 
     this.form2 = new FormGroup({
@@ -119,18 +152,43 @@ export class AppComponent {
     switch(contract){
       case '1': this.title = "Contrato a Término Fijo";
       this.tipe1();
+      this.termFijo = true;
+      this.termIndf = false;
+      this.aprend = false;
+      this.labor = false;
+      this.serv = false;
       break;
       case '2': this.title = "Contrato a término indefinido";
       this.tipe2();
+      this.termFijo = false;
+      this.termIndf = true;
+      this.aprend = false;
+      this.labor = false;
+      this.serv = false;
       break;
       case '3': this.title = "Contrato de Obra o labor";
       this.tipe3();
+      this.termFijo = false;
+      this.termIndf = false;
+      this.aprend = false;
+      this.labor = true;
+      this.serv = false;
       break;
       case '4': this.title = "Contrato civil por prestación de servicios";
       this.tipe4();
+      this.termFijo = false;
+      this.termIndf = false;
+      this.aprend = false;
+      this.labor = false;
+      this.serv = true;
       break;
       case '5': this.title = "Contrato de aprendizaje";
       this.tipe5();
+      this.termFijo = false;
+      this.termIndf = false;
+      this.aprend = true;
+      this.labor = false;
+      this.serv = false;
       break;
     }
   }
@@ -158,7 +216,7 @@ export class AppComponent {
   }
 
   calcular(){
-    if(this.form.valid || this.form0.valid){
+    if(this.form.valid || this.form0.valid || this.form1.valid){
       this.isCalculated = true;
       
       switch(this.selection){
@@ -213,6 +271,165 @@ export class AppComponent {
 
   NominaCalculated(){
     
+    let contract = this.form2.controls['tipeContract'].value;
+    switch(contract){
+      case '1': this.title = "Contrato a Término Fijo";
+        this.NominaFuncs();
+        break;
+      case '2': this.title = "Contrato a término indefinido";
+        this.NominaFuncs();
+        break;
+      case '3': this.title = "Contrato de Obra o labor";
+  
+        break;
+      case '4': this.title = "Contrato civil por prestación de servicios";
+        this.NominaServ();
+        break;
+      case '5': this.title = "Contrato de aprendizaje";
+
+        break;
+    }
+  }
+
+  NominaServ(){
+    let tot = 0;
+    let subTot = 0;
+
+    this.contIndxTable += 1;
+
+    if(this.form1.controls['transAux'].value == 'false'){
+      
+      this.baseSal = this.form1.controls['daysNormal'].value * 33333.33 + (this.form1.controls['daysNight'].value * (33333.33 + 5625)); 
+      this.baseSal = (this.form1.controls['salary'].value - this.baseSal) + this.baseSal;
+
+      this.baseSalPlusExtras = ((this.baseSal * 1.75 * this.form0.controls['hrsExtraNight'].value) / 240) + ((this.baseSal * 1.25 * this.form1.controls['hrsExtraDay'].value) / 240)
+    
+      this.baseSalPlusHolidays = (this.form1.controls['workOnHolidaysDay'].value * 8333.33) + (this.form1.controls['workOnHolidaysNight'].value * 10416.67)
+    
+      this.baseSalPlusTransAux = 0;
+
+      this.salMinusPension = this.baseSal * 0.4 * 0.16;
+
+      this.salMinusEPS = this.baseSal * 0.4 * 0.125;
+
+      subTot = this.baseSal + ((this.baseSal * 1.75 * this.form1.controls['hrsExtraNight'].value) / 240) + ((this.baseSal * 1.25 * this.form1.controls['hrsExtraDay'].value) / 240) + (this.form1.controls['workOnHolidaysDay'].value * 8333.33) + (this.form1.controls['workOnHolidaysNight'].value * 10416.67)
+    
+      tot = subTot - (this.salMinusEPS + this.salMinusPension);
+
+    }else{
+      this.baseSal = this.form1.controls['daysNormal'].value * 33333.33 + (this.form1.controls['daysNight'].value * (33333.33 + 5625)); 
+      this.baseSal = (this.form1.controls['salary'].value - this.baseSal) + this.baseSal;
+      
+      this.baseSalPlusExtras = ((this.baseSal * 1.75 * this.form1.controls['hrsExtraNight'].value) / 240) + ((this.baseSal * 1.25 * this.form1.controls['hrsExtraDay'].value) / 240)// + (this.form.controls['salary'].value * ) 
+    
+      this.baseSalPlusHolidays = (this.form1.controls['workOnHolidaysDay'].value * 8333.33) + (this.form1.controls['workOnHolidaysNight'].value * 10416.67)
+    
+      this.baseSalPlusTransAux = 117172;
+
+      this.salMinusPension = this.baseSal * 0.4 * 0.16;
+
+      this.salMinusEPS = this.baseSal * 0.4 * 0.125;
+
+      subTot = this.baseSal + 117172 + (this.form1.controls['workOnHolidaysDay'].value * 8333.33) + (this.form1.controls['workOnHolidaysNight'].value * 10416.67) + ((this.baseSal * 1.75 * this.form1.controls['hrsExtraNight'].value) / 240) + ((this.baseSal * 1.25 * this.form1.controls['hrsExtraDay'].value) / 240)
+
+      tot = subTot - (this.salMinusEPS + this.salMinusPension);
+    }
+    
+    // parafiscales - prestaciones
+    let arlLevel = this.form1.controls['arlLevel'].value;
+    switch(arlLevel){
+      case 1:
+        this.arl = subTot * 0.4 * 0.0052;
+        break;
+      case 2:
+        this.arl = subTot * 0.4 * 0.01044;
+        break;
+      case 3:
+        this.arl = subTot * 0.4 * 0.02436;
+        break;
+      case 4:
+        this.arl = subTot * 0.4 * 0.04350;
+        break;
+      case 5:
+        this.arl = subTot * 0.4 * 0.06960;
+        break;
+      default:
+        this.arl = subTot * 0.4 * 0.06960;
+        break;
+    }
+
+    this.pensiones = (subTot - this.baseSalPlusTransAux) * 0.12;
+    this.caja = (subTot - this.baseSalPlusTransAux) * 0.04;
+    this.cesantias = subTot * 0.0833;
+    this.intereses = subTot * 0.01;
+    this.prima = subTot * 0.0833;
+    this.vacaciones = (subTot - this.baseSalPlusTransAux - this.baseSalPlusExtras) * 0.0417;
+    this.totPrestaciones = this.arl + this.pensiones + this.caja + this.cesantias + this.intereses + this.prima + this.vacaciones;
+
+    let impuestos = tot - this.salMinusPension - this.salMinusEPS - this.arl;
+
+    let uvt = (tot - this.salMinusPension - this.salMinusEPS - this.arl) / 38004
+    let uvtRetention = 0;
+
+    if(uvt > 0 && uvt < 95){
+      uvtRetention = 0; 
+    }
+
+    if(uvt > 95 && uvt < 150){
+      uvtRetention = (uvt - 95) * 0.19;
+    }
+
+    if(uvt > 150 && uvt < 360){
+      uvtRetention = (uvt - 150) * 0.28 + 10;
+    }
+
+    if(uvt > 360){
+      uvtRetention = (uvt - 360) * 0.33 + 69;
+    }
+
+    let obj:tablaNomina = {
+      baseSal: this.baseSal,
+      baseCotizacion: this.baseSal * 0.4,
+      baseSalPlusExtras: this.baseSalPlusExtras,
+      baseSalPlusHolidays: this.baseSalPlusHolidays,
+      baseSalPlusTransAux: this.baseSalPlusTransAux,
+      salMinusPension: this.salMinusPension,
+      salMinusEPS: this.salMinusEPS,
+      totalSal: tot - uvtRetention * 38004 - impuestos * 0.0069 
+    };
+
+    let obj2:tablaPrestaciones = {
+      arl: this.arl,
+      pensiones: this.pensiones,
+      caja: this.caja,
+      cesantias: this.cesantias,
+      intereses: this.intereses,
+      prima: this.prima,
+      vacaciones: this.vacaciones,
+      totPrestaciones: this.totPrestaciones
+    }
+
+    let obj3:tablaNominaServ = {
+      impuestos: impuestos,
+      uvt: uvt,
+      uvtRetention: uvtRetention,
+      retefuente: uvtRetention * 38004,
+      reteICA: impuestos * 0.0069,
+      total: tot - uvtRetention * 38004 - impuestos * 0.0069 
+    }
+
+    if(this.contIndxTable > 1){
+      this.listaNomina.splice(0, this.listaNomina.length);
+      this.listaPrestaciones.splice(0, this.listaPrestaciones.length);
+      this.listaNominaServ.splice(0, this.listaNominaServ.length);
+    }
+
+    this.listaNomina.push(obj);
+    this.listaPrestaciones.push(obj2);
+    this.listaNominaServ.push(obj3);
+  }
+
+  NominaFuncs(){
     let tot = 0;
     let subTot = 0;
 
@@ -268,6 +485,7 @@ export class AppComponent {
 
     let obj:tablaNomina = {
       baseSal: this.baseSal,
+      baseCotizacion: this.baseSal * 0.4,
       baseSalPlusExtras: this.baseSalPlusExtras,
       baseSalPlusHolidays: this.baseSalPlusHolidays,
       baseSalPlusTransAux: this.baseSalPlusTransAux,
@@ -289,10 +507,10 @@ export class AppComponent {
 
     if(this.contIndxTable > 1){
       this.listaNomina.splice(0, this.listaNomina.length);
+      this.listaPrestaciones.splice(0, this.listaPrestaciones.length);
     }
 
     this.listaNomina.push(obj);
     this.listaPrestaciones.push(obj2);
-    
   }
 }

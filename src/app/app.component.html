@@ -151,7 +151,7 @@
 </div>
 
 
-<div class="container mt-3" *ngIf="nomina">
+<div class="container mt-3" *ngIf="nomina && termFijo || nomina && termIndf || nomina && labor">
   <div class="card mt-3">
     <div class="card-body">
       <h2>Calcular Nómina:</h2>
@@ -316,6 +316,214 @@
     </div>
   </div>
 </div>
-    
+ 
+<div class="container mt-3" *ngIf="nomina && serv">
+  <div class="card mt-3">
+    <div class="card-body">
+      <h2>Calcular Nómina:</h2>
+      
+      <form [formGroup]="form1">
+        <div class="row">
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Salario Base: </label>
+            <input [class.is-invalid]="form1.get('salary')?.touched && form1.get('salary')?.invalid"
+            type="number" class="form-control" formControlName="salary">
+            <div class="invalid-feedback">
+              Es un campo requerido.
+            </div>
+          </div>
+          
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada diurna laborados: </label>
+            <input [class.is-invalid]="form1.get('daysNormal')?.touched && form1.get('daysNormal')?.invalid"
+            type="number" class="form-control" formControlName="daysNormal">
+            <div class="invalid-feedback">
+              Es un campo requerido.
+            </div>
+          </div>
+
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada nocturna laborados: </label>
+            <input type="number" class="form-control" formControlName="daysNight">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras nocturnas: </label>
+            <input type="number" class="form-control" formControlName="hrsExtraNight">
+          </div>
+
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras diurnas: </label>
+            <input type="number" class="form-control" formControlName="hrsExtraDay">
+          </div>
+
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en festivos diurno: </label>
+            <input type="number" class="form-control" formControlName="workOnHolidaysDay">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en festivos nocturno: </label>
+            <input type="number" class="form-control" formControlName="workOnHolidaysNight">
+          </div>
+
+          <div class="mb-3 col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Nivel de arl: </label>
+            <input [class.is-invalid]="form1.get('arlLevel')?.touched && form1.get('arlLevel')?.invalid"
+            type="number" class="form-control" formControlName="arlLevel">
+            <div class="invalid-feedback">
+              Es un campo requerido.
+            </div>
+          </div>
+
+          <div class="mb-3 form-check col-md-4">
+            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Recibe auxilio de transporte?</label>
+            <span class="space"></span>
+            <i class="bi bi-question-circle"></i>
+            <br>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="true" formControlName="transAux">
+              <label class="form-check-label" for="inlineRadio1">Si</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="false" formControlName="transAux">
+              <label class="form-check-label" for="inlineRadio2">No</label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" (click)="calcular()">Calcular</button>
+      </form>
+      
+      <div class="container" *ngIf="isCalculated">
+        <hr>
+        <h2>Sus prestaciones son: </h2>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Descripción</th>
+              <th scope="col">Valor</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let item of listaNomina">
+            <tr>
+              <th scope="row">Salario base</th>
+              <td>{{item.baseSal | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Valor total hrs extras laboradas</th>
+              <td>{{item.baseSalPlusExtras | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Valor total días festivos laborados</th>
+              <td>{{item.baseSalPlusHolidays | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Valor auxílio de transporte</th>
+              <td>{{item.baseSalPlusTransAux | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Aporte a pensión</th>
+              <td>{{item.salMinusPension | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Aporte a EPS</th>
+              <td>{{item.salMinusEPS | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Salario total</th>
+              <td>{{item.totalSal | number}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Descripción</th>
+              <th scope="col">Valor</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let item of listaNominaServ">
+            <tr>
+              <th scope="row">Impuestos</th>
+              <td>{{item.impuestos | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">UVT</th>
+              <td>{{item.uvt | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Retención en UVT</th>
+              <td>{{item.uvtRetention | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Retefuente</th>
+              <td>{{item.retefuente | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">ReteICA</th>
+              <td>{{item.reteICA | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Total</th>
+              <td>{{item.total | number}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Descripción</th>
+              <th scope="col">Valor</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let item of listaPrestaciones">
+            <tr>
+              <th scope="row">ARL</th>
+              <td>{{item.arl | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Pensiones</th>
+              <td>{{item.pensiones | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Caja</th>
+              <td>{{item.caja | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Cesantías</th>
+              <td>{{item.cesantias | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Intereses</th>
+              <td>{{item.intereses | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Prima</th>
+              <td>{{item.prima | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Vacaciones</th>
+              <td>{{item.vacaciones | number}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Total de prestaciones</th>
+              <td>{{item.totPrestaciones | number}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
