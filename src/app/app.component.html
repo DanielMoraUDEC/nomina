@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,549 +12,650 @@
     })
   </script>
 </head>
+
 <body>
 
   <h1 class="mt-3 mb-5 text-center">Cálculo de Nómina o Liquidación</h1>
 
   <div class="container">
     <form [formGroup]="form2">
-    <div class="row justify-content-center">
-      <div class="col-md-3 mb-3">
-        <label for="">Tipo de contrato:</label>
-        <select class="form-select" aria-label="Default select example" (change)="contrato($event.target)"
-        formControlName="tipeContract"
-        [class.is-invalid]="form.get('tipeContract')?.touched && form.get('tipeContract')?.invalid">
-          <option selected>Seleccione</option>
-          <option value="1">Contrato a Término Fijo</option>
-          <option value="2">Contrato a término indefinido</option>
-          <option value="3">Contrato de Obra o labor</option>
-          <option value="4">Contrato civil por prestación de servicios</option>
-          <option value="5">Contrato de aprendizaje</option>
-        </select>
-        <div class="invalid-feedback">
-          Es un campo requerido.
+      <div class="row justify-content-center">
+        <div class="col-md-3 mb-3">
+          <label for="">Tipo de contrato:</label>
+          <select class="form-select" aria-label="Default select example" (change)="contrato($event.target)"
+            formControlName="tipeContract"
+            [class.is-invalid]="form.get('tipeContract')?.touched && form.get('tipeContract')?.invalid">
+            <option selected>Seleccione</option>
+            <option value="1">Contrato a Término Fijo</option>
+            <option value="2">Contrato a término indefinido</option>
+            <option value="3">Contrato de Obra o labor</option>
+            <option value="4">Contrato civil por prestación de servicios</option>
+            <option value="5">Contrato de aprendizaje</option>
+          </select>
+          <div class="invalid-feedback">
+            Es un campo requerido.
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="">Interés:</label>
+          <select class="form-select" aria-label="Default select example" (change)="contrato($event.target)"
+            formControlName="option" [class.is-invalid]="form.get('option')?.touched && form.get('option')?.invalid">
+            <option selected>Seleccione</option>
+            <option value="1">Nómina</option>
+            <option value="2">Liquidación</option>
+          </select>
+          <div class="invalid-feedback">
+            Es un campo requerido.
+          </div>
         </div>
       </div>
-      <div class="col-md-3 mb-3">
-        <label for="">Interés:</label>
-        <select class="form-select" aria-label="Default select example" (change)="contrato($event.target)"
-        formControlName="option"
-        [class.is-invalid]="form.get('option')?.touched && form.get('option')?.invalid">
-          <option selected>Seleccione</option>
-          <option value="1">Nómina</option>
-          <option value="2">Liquidación</option>
-        </select>
-        <div class="invalid-feedback">
-          Es un campo requerido.
-        </div>
-      </div>
+    </form>
   </div>
-  </form>
-</div>
 
 
-<div class="container mt-3" *ngIf="isSelect">
-  <div class="card">
-    <div class="card-body">
-      <div class="row">
-        <div class="col">
-          <h2>{{title}}</h2>
+  <div class="container mt-3" *ngIf="isSelect">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h2>{{title}}</h2>
+          </div>
         </div>
+        <p>{{definition}}</p>
       </div>
-      <p>{{definition}}</p>
     </div>
   </div>
-</div>
 
 
-<div class="container mt-3" *ngIf="liquidacion" >
-  <div class="card mt-3" *ngIf="showCalculates2">
-    <div class="card-body">
-      <h2>Este contrato no tiene derecho liquidación</h2>
-    </div>
-  </div>
-  
-  <div class="card mt-3" *ngIf="showCalculates">
-    <div class="card-body">
-      <h2>Calcular Liquidación:</h2>
-      
-      <form [formGroup]="form">
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Salario Base: </label>
-            <input [class.is-invalid]="form.get('salary')?.touched && form.get('salary')?.invalid"
-            type="number" class="form-control" formControlName="salary">
-            <div class="invalid-feedback">
-              Es un campo requerido.
-          </div>
-          </div>
-          <div class="mb-3 form-check col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Recibe auxilio de transporte?</label>
-            <br>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" value="true" formControlName="transAux">
-              <label class="form-check-label" for="inlineRadio1">Si</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" value="false" formControlName="transAux">
-              <label class="form-check-label" for="inlineRadio2">No</label>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <h3>Periodo calculado:</h3>
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Fecha de Inicio: </label>
-            <input [class.is-invalid]="form.get('startDate')?.touched && form.get('startDate')?.invalid"
-            type="date" class="form-control" formControlName="startDate">
-            <div class="invalid-feedback">
-              Es un campo requerido.
-          </div>
-          </div>
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Fecha de Fin: </label>
-            <input [class.is-invalid]="form.get('endDate')?.touched && form.get('endDate')?.invalid"
-            type="date" class="form-control" formControlName="endDate">
-            <div class="invalid-feedback">
-              Es un campo requerido.
-          </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="mb-3 form-check col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Se retiró en día de pago de nómina?</label>
-            <br>
-            <div class="form-check form-check-inline" (click)="morePays($event.target)">
-              <input class="form-check-input" type="radio" value="2" name="pays">
-              <label class="form-check-label" for="inlineRadio1">Si</label>
-            </div>
-            <div class="form-check form-check-inline" (click)="morePays($event.target)">
-              <input class="form-check-input" type="radio" value="1" name="pays">
-              <label class="form-check-label" for="inlineRadio2">No</label>
-            </div>
-          </div>
-        </div>
-        <div class="row" *ngIf="otherspays">
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extra diurnas: </label>
-            <input type="number" class="form-control" formControlName="hours1">
-          </div>
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extra nocturnas: </label>
-            <input type="number" class="form-control" formControlName="hours2">
-          </div>
-        </div>
-        <div class="row" *ngIf="otherspays">
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total Hora extra diurna dominical: </label>
-            <input type="number" class="form-control" formControlName="hours3">
-          </div>
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total Hora extra nocturna dominical: </label>
-            <input type="number" class="form-control" formControlName="hours4">
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary" (click)="calcular()" [disabled]="disabled">Calcular</button>
-      </form>
-      
-      <div class="container" *ngIf="isCalculated">
-        <hr>
-        <h2>Sus prestaciones son: </h2>
-
-        <table class="table table-secondary table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Descripción</th>
-              <th scope="col">Valor</th>
-            </tr>
-          </thead>
-          <tbody *ngFor="let item of lista">
-            <tr>
-              <th scope="row">{{item.descripcion}}</th>
-              <td>${{item.valor | number}}</td>
-            </tr>
-          </tbody>
-        </table>
+  <div class="container mt-3" *ngIf="liquidacion">
+    <div class="card mt-3" *ngIf="showCalculates2">
+      <div class="card-body">
+        <h2>Este contrato no tiene derecho liquidación</h2>
       </div>
-      
     </div>
-  </div>
-</div>
 
+    <div class="card mt-3" *ngIf="showCalculates">
+      <div class="card-body">
+        <h2>Calcular Liquidación:</h2>
 
-<div class="container mt-3" *ngIf="nomina && termFijo || nomina && termIndf || nomina && labor">
-  <div class="card mt-3">
-    <div class="card-body">
-      <h2>Calcular Nómina:</h2>
-      
-      <form [formGroup]="form0">
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Salario Base: </label>
-            <input [class.is-invalid]="form0.get('salary')?.touched && form0.get('salary')?.invalid"
-            type="number" class="form-control" formControlName="salary">
-            <div class="invalid-feedback">
-              Es un campo requerido.
+        <form [formGroup]="form">
+          <div class="row">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Salario Base: </label>
+              <input [class.is-invalid]="form.get('salary')?.touched && form.get('salary')?.invalid" type="number"
+                class="form-control" formControlName="salary">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
+            </div>
+            <div class="mb-3 form-check col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Recibe auxilio de
+                transporte?</label>
+              <br>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="true" formControlName="transAux">
+                <label class="form-check-label" for="inlineRadio1">Si</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="false" formControlName="transAux">
+                <label class="form-check-label" for="inlineRadio2">No</label>
+              </div>
             </div>
           </div>
-          
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada diurna laborados: </label>
-            <input [class.is-invalid]="form0.get('daysNormal')?.touched && form0.get('daysNormal')?.invalid"
-            type="number" class="form-control" formControlName="daysNormal">
-            <div class="invalid-feedback">
-              Es un campo requerido.
+          <div class="row">
+            <h3>Periodo calculado:</h3>
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Fecha de Inicio: </label>
+              <input [class.is-invalid]="form.get('startDate')?.touched && form.get('startDate')?.invalid" type="date"
+                class="form-control" formControlName="startDate">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
+            </div>
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Fecha de Fin: </label>
+              <input [class.is-invalid]="form.get('endDate')?.touched && form.get('endDate')?.invalid" type="date"
+                class="form-control" formControlName="endDate">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
             </div>
           </div>
-
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada nocturna laborados: </label>
-            <input type="number" class="form-control" formControlName="daysNight">
+          <div class="row">
+            <div class="mb-3 form-check col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Se retiró en día de pago de
+                nómina?</label>
+              <br>
+              <div class="form-check form-check-inline" (click)="morePays($event.target)">
+                <input class="form-check-input" type="radio" value="2" name="pays">
+                <label class="form-check-label" for="inlineRadio1">Si</label>
+              </div>
+              <div class="form-check form-check-inline" (click)="morePays($event.target)">
+                <input class="form-check-input" type="radio" value="1" name="pays">
+                <label class="form-check-label" for="inlineRadio2">No</label>
+              </div>
+            </div>
           </div>
+          <div class="row" *ngIf="otherspays">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extra diurnas:
+              </label>
+              <input type="number" class="form-control" formControlName="hours1">
+            </div>
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extra nocturnas:
+              </label>
+              <input type="number" class="form-control" formControlName="hours2">
+            </div>
+          </div>
+          <div class="row" *ngIf="otherspays">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total Hora extra diurna
+                dominical: </label>
+              <input type="number" class="form-control" formControlName="hours3">
+            </div>
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total Hora extra nocturna
+                dominical: </label>
+              <input type="number" class="form-control" formControlName="hours4">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" (click)="calcular()" [disabled]="disabled">Calcular</button>
+        </form>
+
+        <div class="container" *ngIf="isCalculated">
+          <hr>
+          <h2>Sus prestaciones son: </h2>
+
+          <table class="table table-secondary table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Descripción</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of lista">
+              <tr>
+                <th scope="row">{{item.descripcion}}</th>
+                <td>${{item.valor | number}}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras nocturnas: </label>
-            <input type="number" class="form-control" formControlName="hrsExtraNight">
-          </div>
-
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras diurnas: </label>
-            <input type="number" class="form-control" formControlName="hrsExtraDay">
-          </div>
-
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en festivos diurno: </label>
-            <input type="number" class="form-control" formControlName="workOnHolidaysDay">
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en festivos nocturno: </label>
-            <input type="number" class="form-control" formControlName="workOnHolidaysNight">
-          </div>
-
-          <div class="mb-3 col-md-4"></div>
-
-          <div class="mb-3 form-check col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Recibe auxilio de transporte?</label>
-            <span class="space"></span>
-            <i class="bi bi-question-circle"></i>
-            <br>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" value="true" formControlName="transAux">
-              <label class="form-check-label" for="inlineRadio1">Si</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" value="false" formControlName="transAux">
-              <label class="form-check-label" for="inlineRadio2">No</label>
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary" (click)="calcular()">Calcular</button>
-      </form>
-      
-      <div class="container" *ngIf="isCalculated">
-        <hr>
-        <h2>Sus prestaciones son: </h2>
-
-        <table class="table table-secondary table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Descripción</th>
-              <th scope="col">Valor</th>
-            </tr>
-          </thead>
-          <tbody *ngFor="let item of listaNomina">
-            <tr>
-              <th scope="row">Salario base</th>
-              <td>{{item.baseSal | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Valor total hrs extras laboradas</th>
-              <td>{{item.baseSalPlusExtras | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Valor total días festivos laborados</th>
-              <td>{{item.baseSalPlusHolidays | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Valor auxílio de transporte</th>
-              <td>{{item.baseSalPlusTransAux | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Aporte a pensión</th>
-              <td>{{item.salMinusPension | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Aporte a EPS</th>
-              <td>{{item.salMinusEPS | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Salario total</th>
-              <td>{{item.totalSal | number}}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Descripción</th>
-              <th scope="col">Valor</th>
-            </tr>
-          </thead>
-          <tbody *ngFor="let item of listaPrestaciones">
-            <tr>
-              <th scope="row">ARL</th>
-              <td>{{item.arl | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Pensiones</th>
-              <td>{{item.pensiones | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Caja</th>
-              <td>{{item.caja | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Cesantías</th>
-              <td>{{item.cesantias | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Intereses</th>
-              <td>{{item.intereses | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Prima</th>
-              <td>{{item.prima | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Vacaciones</th>
-              <td>{{item.vacaciones | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Total de prestaciones</th>
-              <td>{{item.totPrestaciones | number}}</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
-      
     </div>
   </div>
-</div>
- 
-<div class="container mt-3" *ngIf="nomina && serv">
-  <div class="card mt-3">
-    <div class="card-body">
-      <h2>Calcular Nómina:</h2>
-      
-      <form [formGroup]="form1">
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Salario Base: </label>
-            <input [class.is-invalid]="form1.get('salary')?.touched && form1.get('salary')?.invalid"
-            type="number" class="form-control" formControlName="salary">
-            <div class="invalid-feedback">
-              Es un campo requerido.
+
+
+  <div class="container mt-3" *ngIf="nomina && termFijo || nomina && termIndf || nomina && labor">
+    <div class="card mt-3">
+      <div class="card-body">
+        <h2>Calcular Nómina:</h2>
+
+        <form [formGroup]="form0">
+          <div class="row">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Salario Base: </label>
+              <input [class.is-invalid]="form0.get('salary')?.touched && form0.get('salary')?.invalid" type="number"
+                class="form-control" formControlName="salary">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
             </div>
-          </div>
-          
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada diurna laborados: </label>
-            <input [class.is-invalid]="form1.get('daysNormal')?.touched && form1.get('daysNormal')?.invalid"
-            type="number" class="form-control" formControlName="daysNormal">
-            <div class="invalid-feedback">
-              Es un campo requerido.
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada diurna
+                laborados: </label>
+              <input [class.is-invalid]="form0.get('daysNormal')?.touched && form0.get('daysNormal')?.invalid"
+                type="number" class="form-control" formControlName="daysNormal">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
+            </div>
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada nocturna
+                laborados: </label>
+              <input type="number" class="form-control" formControlName="daysNight">
             </div>
           </div>
 
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada nocturna laborados: </label>
-            <input type="number" class="form-control" formControlName="daysNight">
+          <div class="row">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras
+                nocturnas: </label>
+              <input type="number" class="form-control" formControlName="hrsExtraNight">
+            </div>
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras diurnas:
+              </label>
+              <input type="number" class="form-control" formControlName="hrsExtraDay">
+            </div>
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en
+                festivos diurno: </label>
+              <input type="number" class="form-control" formControlName="workOnHolidaysDay">
+            </div>
           </div>
+
+          <div class="row">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en
+                festivos nocturno: </label>
+              <input type="number" class="form-control" formControlName="workOnHolidaysNight">
+            </div>
+
+            <div class="mb-3 col-md-4"></div>
+
+            <div class="mb-3 form-check col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Recibe auxilio de
+                transporte?</label>
+              <span class="space"></span>
+              <i class="bi bi-question-circle"></i>
+              <br>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="true" formControlName="transAux">
+                <label class="form-check-label" for="inlineRadio1">Si</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="false" formControlName="transAux">
+                <label class="form-check-label" for="inlineRadio2">No</label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" (click)="calcular()">Calcular</button>
+        </form>
+
+        <div class="container" *ngIf="isCalculated">
+          <hr>
+          <h2>Sus prestaciones son: </h2>
+
+          <table class="table table-secondary table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Descripción</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of listaNomina">
+              <tr>
+                <th scope="row">Salario base</th>
+                <td>{{item.baseSal | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Valor total hrs extras laboradas</th>
+                <td>{{item.baseSalPlusExtras | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Valor total días festivos laborados</th>
+                <td>{{item.baseSalPlusHolidays | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Valor auxílio de transporte</th>
+                <td>{{item.baseSalPlusTransAux | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Aporte a pensión</th>
+                <td>{{item.salMinusPension | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Aporte a EPS</th>
+                <td>{{item.salMinusEPS | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Salario total</th>
+                <td>{{item.totalSal | number}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Descripción</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of listaPrestaciones">
+              <tr>
+                <th scope="row">ARL</th>
+                <td>{{item.arl | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Pensiones</th>
+                <td>{{item.pensiones | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Caja</th>
+                <td>{{item.caja | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Cesantías</th>
+                <td>{{item.cesantias | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Intereses</th>
+                <td>{{item.intereses | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Prima</th>
+                <td>{{item.prima | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Vacaciones</th>
+                <td>{{item.vacaciones | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Total de prestaciones</th>
+                <td>{{item.totPrestaciones | number}}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras nocturnas: </label>
-            <input type="number" class="form-control" formControlName="hrsExtraNight">
-          </div>
-
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras diurnas: </label>
-            <input type="number" class="form-control" formControlName="hrsExtraDay">
-          </div>
-
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en festivos diurno: </label>
-            <input type="number" class="form-control" formControlName="workOnHolidaysDay">
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en festivos nocturno: </label>
-            <input type="number" class="form-control" formControlName="workOnHolidaysNight">
-          </div>
-
-          <div class="mb-3 col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Nivel de arl: </label>
-            <input [class.is-invalid]="form1.get('arlLevel')?.touched && form1.get('arlLevel')?.invalid"
-            type="number" class="form-control" formControlName="arlLevel">
-            <div class="invalid-feedback">
-              Es un campo requerido.
-            </div>
-          </div>
-
-          <div class="mb-3 form-check col-md-4">
-            <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Recibe auxilio de transporte?</label>
-            <span class="space"></span>
-            <i class="bi bi-question-circle"></i>
-            <br>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" value="true" formControlName="transAux">
-              <label class="form-check-label" for="inlineRadio1">Si</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" value="false" formControlName="transAux">
-              <label class="form-check-label" for="inlineRadio2">No</label>
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary" (click)="calcular()">Calcular</button>
-      </form>
-      
-      <div class="container" *ngIf="isCalculated">
-        <hr>
-        <h2>Sus prestaciones son: </h2>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Descripción</th>
-              <th scope="col">Valor</th>
-            </tr>
-          </thead>
-          <tbody *ngFor="let item of listaNomina">
-            <tr>
-              <th scope="row">Salario base</th>
-              <td>{{item.baseSal | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Valor total hrs extras laboradas</th>
-              <td>{{item.baseSalPlusExtras | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Valor total días festivos laborados</th>
-              <td>{{item.baseSalPlusHolidays | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Valor auxílio de transporte</th>
-              <td>{{item.baseSalPlusTransAux | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Aporte a pensión</th>
-              <td>{{item.salMinusPension | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Aporte a EPS</th>
-              <td>{{item.salMinusEPS | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Salario total</th>
-              <td>{{item.totalSal | number}}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Descripción</th>
-              <th scope="col">Valor</th>
-            </tr>
-          </thead>
-          <tbody *ngFor="let item of listaNominaServ">
-            <tr>
-              <th scope="row">Impuestos</th>
-              <td>{{item.impuestos | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">UVT</th>
-              <td>{{item.uvt | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Retención en UVT</th>
-              <td>{{item.uvtRetention | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Retefuente</th>
-              <td>{{item.retefuente | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">ReteICA</th>
-              <td>{{item.reteICA | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Total</th>
-              <td>{{item.total | number}}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Descripción</th>
-              <th scope="col">Valor</th>
-            </tr>
-          </thead>
-          <tbody *ngFor="let item of listaPrestaciones">
-            <tr>
-              <th scope="row">ARL</th>
-              <td>{{item.arl | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Pensiones</th>
-              <td>{{item.pensiones | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Caja</th>
-              <td>{{item.caja | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Cesantías</th>
-              <td>{{item.cesantias | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Intereses</th>
-              <td>{{item.intereses | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Prima</th>
-              <td>{{item.prima | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Vacaciones</th>
-              <td>{{item.vacaciones | number}}</td>
-            </tr>
-            <tr>
-              <th scope="row">Total de prestaciones</th>
-              <td>{{item.totPrestaciones | number}}</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
-      
     </div>
   </div>
-</div>
+
+  <div class="container mt-3" *ngIf="nomina && serv">
+    <div class="card mt-3">
+      <div class="card-body">
+        <h2>Calcular Nómina:</h2>
+
+        <form [formGroup]="form1">
+          <div class="row">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Salario Base: </label>
+              <input [class.is-invalid]="form1.get('salary')?.touched && form1.get('salary')?.invalid" type="number"
+                class="form-control" formControlName="salary">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
+            </div>
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada diurna
+                laborados: </label>
+              <input [class.is-invalid]="form1.get('daysNormal')?.touched && form1.get('daysNormal')?.invalid"
+                type="number" class="form-control" formControlName="daysNormal">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
+            </div>
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días jornada nocturna
+                laborados: </label>
+              <input type="number" class="form-control" formControlName="daysNight">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras
+                nocturnas: </label>
+              <input type="number" class="form-control" formControlName="hrsExtraNight">
+            </div>
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total horas extras diurnas:
+              </label>
+              <input type="number" class="form-control" formControlName="hrsExtraDay">
+            </div>
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en
+                festivos diurno: </label>
+              <input type="number" class="form-control" formControlName="workOnHolidaysDay">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Total días trabajados en
+                festivos nocturno: </label>
+              <input type="number" class="form-control" formControlName="workOnHolidaysNight">
+            </div>
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Nivel de arl: </label>
+              <input [class.is-invalid]="form1.get('arlLevel')?.touched && form1.get('arlLevel')?.invalid" type="number"
+                class="form-control" formControlName="arlLevel">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
+            </div>
+
+            <div class="mb-3 form-check col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Recibe auxilio de
+                transporte?</label>
+              <span class="space"></span>
+              <i class="bi bi-question-circle"></i>
+              <br>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="true" formControlName="transAux">
+                <label class="form-check-label" for="inlineRadio1">Si</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="false" formControlName="transAux">
+                <label class="form-check-label" for="inlineRadio2">No</label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" (click)="calcular()">Calcular</button>
+        </form>
+
+        <div class="container" *ngIf="isCalculated">
+          <hr>
+          <h2>Sus prestaciones son: </h2>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Descripción</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of listaNomina">
+              <tr>
+                <th scope="row">Salario base</th>
+                <td>{{item.baseSal | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Valor total hrs extras laboradas</th>
+                <td>{{item.baseSalPlusExtras | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Valor total días festivos laborados</th>
+                <td>{{item.baseSalPlusHolidays | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Valor auxílio de transporte</th>
+                <td>{{item.baseSalPlusTransAux | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Aporte a pensión</th>
+                <td>{{item.salMinusPension | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Aporte a EPS</th>
+                <td>{{item.salMinusEPS | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Salario total</th>
+                <td>{{item.totalSal | number}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Descripción</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of listaNominaServ">
+              <tr>
+                <th scope="row">Impuestos</th>
+                <td>{{item.impuestos | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">UVT</th>
+                <td>{{item.uvt | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Retención en UVT</th>
+                <td>{{item.uvtRetention | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Retefuente</th>
+                <td>{{item.retefuente | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">ReteICA</th>
+                <td>{{item.reteICA | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Total</th>
+                <td>{{item.total | number}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Descripción</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of listaPrestaciones">
+              <tr>
+                <th scope="row">ARL</th>
+                <td>{{item.arl | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Pensiones</th>
+                <td>{{item.pensiones | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Caja</th>
+                <td>{{item.caja | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Cesantías</th>
+                <td>{{item.cesantias | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Intereses</th>
+                <td>{{item.intereses | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Prima</th>
+                <td>{{item.prima | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Vacaciones</th>
+                <td>{{item.vacaciones | number}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Total de prestaciones</th>
+                <td>{{item.totPrestaciones | number}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3" *ngIf="nomina && aprend">
+    <div class="card mt-3">
+      <div class="card-body">
+        <h2>Calcular Nómina:</h2>
+
+        <form [formGroup]="form3">
+          <div class="row">
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Fecha de Inicio: </label>
+              <input [class.is-invalid]="form3.get('startDate')?.touched && form3.get('startDate')?.invalid" type="date"
+                class="form-control" formControlName="startDate">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
+            </div>
+
+            <div class="mb-3 col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">Fecha de Fin: </label>
+              <input [class.is-invalid]="form3.get('endDate')?.touched && form3.get('endDate')?.invalid" type="date"
+                class="form-control" formControlName="endDate">
+              <div class="invalid-feedback">
+                Es un campo requerido.
+              </div>
+            </div>
+
+            <div class="mb-3 form-check col-md-4">
+              <label for="exampleInputEmail1" class="form-label" style="font-weight: bold;">¿Tipo de fase del aprendiz?</label>
+              <span class="space"></span>
+              <br>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="true" formControlName="faseType">
+                <label class="form-check-label" for="inlineRadio1">Fase lectiva</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="false" formControlName="faseType">
+                <label class="form-check-label" for="inlineRadio2">Fase práctica</label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" (click)="calcular()">Calcular</button>
+        </form>
+
+        <div class="container" *ngIf="isCalculated && !invalidContract">
+          <hr>
+          <h2>Sus prestaciones son: </h2>
+
+          <table class="table table-secondary table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Descripción</th>
+                <th scope="col">Valor</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let item of listaNomina">
+              <tr>
+                <th scope="row">Salario base</th>
+                <td>{{item.baseSal | number}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="container" *ngIf="isCalculated && invalidContract">
+          <br>
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h2>{{title}}</h2>
+                </div>
+              </div>
+              <p>{{definition}}</p>
+              <a href="https://www.gerencie.com/contratos-de-aprendizaje.html">Conocer más</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
+
 </html>
